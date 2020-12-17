@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Home from './components/home'
 
+import Home from './components/home'
 const FallBack = () => {
     return <div>URL not found</div>;
   };

@@ -1,1 +1,1 @@
-# Playing around with the spotify api
+# backend for the spotify app

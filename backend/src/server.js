@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import morgan from 'morgan';
+import mongoose from 'mongoose';
 import routers from './routers';
 
 // initialize
@@ -15,18 +16,18 @@ app.use(morgan('dev'));
 
 // load environment variables
 require('dotenv').config();
-// // database setup
-// const { mongoURI } = process.env;
-// mongoose.connect(mongoURI, { useNewUrlParser: true });
+// database setup
+const { MONGO_URI } = process.env;
+mongoose.connect(MONGO_URI, { useNewUrlParser: true });
 
-// mongoose.connection.on('open', (ref) => {
-//   console.log('Connected to mongo');
-// });
+mongoose.connection.on('open', (ref) => {
+  console.log('Connected to mongo');
+});
 
-// mongoose.connection.on('error', (err) => {
-//   console.log('Could not connect to mongo! ');
-//   return console.log(err);
-// });
+mongoose.connection.on('error', (err) => {
+  console.log('Could not connect to mongo! ');
+  return console.log(err);
+});
 
 // // set mongoose promises to es6 default
 // mongoose.Promise = global.Promise;

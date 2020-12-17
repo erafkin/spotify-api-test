@@ -1,6 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import session from 'express-session';
+import User from '../models/user';
 
 require('dotenv').config();
 
@@ -30,19 +31,26 @@ passport.use(
       callbackURL: 'http://localhost:9090/auth/spotify/callback', // REMEMBER TO CHANGE THIS OUT
     },
     // eslint-disable-next-line camelcase
-    ((accessToken, refreshToken, expiresIn, profile, done) => {
-      // asynchronous verification, for effect...
-      process.nextTick(() => {
-        // To keep the example simple, the user's spotify profile is returned to
-        // represent the logged-in user. In a typical application, you would want
-        // to associate the spotify account with a user record in your database,
-        // and return that user instead.
-        console.log(accessToken);
-        console.log(refreshToken);
-        console.log(expiresIn);
-        console.log(profile);
-        return done(null, profile);
-      });
+    ((accessToken, refreshToken, expires_in, profile, done) => {
+      const {
+        provider, id, username, displayName, profileUrl, photos, country, followers,
+      } = profile;
+      User.find({ spotifyId: id })
+        .then((users) => {
+          if (users && users.length === 0) {
+            User.create({
+              provider, spotifyId: id, username, displayName, profileUrl, photos, country, followers,
+            }).then((user) => {
+              return done(null, { profile: user, accessToken, refreshToken });
+            }).catch((error) => {
+              return done(error, null);
+            });
+          } else {
+            done(null, { profile, accessToken, refreshToken });
+          }
+        }).catch((error) => {
+          return done(error, null);
+        });
     }),
   ),
 );
@@ -55,7 +63,7 @@ router.get(
   (req, res) => {
     // Successful authentication, redirect home.
     console.log('callback auth SUCCESSFUL');
-    res.redirect(`http://localhost:8080/#${req.user.username}`);
+    res.redirect(`http://localhost:8080/#${req.user.profile.username}&${req.user.accessToken}&${req.user.refreshToken}`);
   },
 );
 

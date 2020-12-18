@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import SpotifyWebApi from 'spotify-web-api-js';
-import Button from 'react-bootstrap/Button';
 
 import {
   login, setUserFromLogin, getTopTracks, getTopArtists, getPlayer,
@@ -16,6 +15,7 @@ const Home = (props) => {
   const [interval, setMyInterval] = useState();
 
   const spotifyApi = new SpotifyWebApi();
+
 
   const getNowPlaying = () => {
     spotifyApi.getMyCurrentPlaybackState()
@@ -52,6 +52,9 @@ const Home = (props) => {
 
   if (!props.user.user && !props.user.setting_user) {
     return (<div>please login</div>);
+  } else if (!props.spotify.top_artists) {
+    props.getTopArtists(); props.getTopTracks();
+    return (<div>loading...</div>);
   } else if (!window.location.href.includes('#')) {
     if (props.user.accessToken) {
       spotifyApi.setAccessToken(props.user.accessToken);
@@ -95,15 +98,6 @@ const Home = (props) => {
         </div>
         <br />
         <br />
-        <div style={{
-          verticalAlign: 'top', display: 'flex', justifyContent: 'space-between', marginRight: '5vw',
-        }}
-        >
-          <Button onClick={() => { props.getTopTracks(); props.getTopArtists(); }}>
-            get top stats
-          </Button>
-
-        </div>
         <div style={{
           verticalAlign: 'top', display: 'flex', justifyContent: 'space-between', marginRight: '5vw',
         }}

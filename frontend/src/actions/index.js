@@ -52,7 +52,6 @@ const getTopTracks = () => {
   return (dispatch, getState) => {
     spotifyRequests.getTopTracks(getState().user.accessToken)
       .then((response) => {
-        console.log(response);
         dispatch({ type: ActionTypes.SET_TOP_TRACKS, payload: response.response });
       })
       .catch((error) => {

@@ -5,7 +5,7 @@ import SpotifyWebApi from 'spotify-web-api-js';
 import Button from 'react-bootstrap/Button';
 
 import {
-  login, setUserFromLogin, getTopTracks, getTopArtists,
+  login, setUserFromLogin, getTopTracks, getTopArtists, getPlayer,
 } from '../actions';
 import { getUser } from '../services/user';
 
@@ -13,19 +13,31 @@ import { getUser } from '../services/user';
 const Home = (props) => {
   const [albumArt, setAlbumArt] = useState('');
   const [currPlaying, setCurrPlaying] = useState();
-  const spotifyApi = new SpotifyWebApi();
+  const [interval, setMyInterval] = useState();
 
+  const spotifyApi = new SpotifyWebApi();
 
   const getNowPlaying = () => {
     spotifyApi.getMyCurrentPlaybackState()
       .then((response) => {
         setCurrPlaying(response.item);
         setAlbumArt(response.item.album.images[0].url);
+        props.getPlayer();
       })
       .catch((error) => {
         console.log(error);
       });
   };
+
+  useEffect(() => {
+    if (currPlaying && props.spotify.player) {
+      clearInterval(interval);
+      setMyInterval(setInterval(() => { props.getPlayer(); getNowPlaying(); }, currPlaying.duration_ms - props.spotify.player.progress_ms + 2000));
+    } else {
+      clearInterval(interval);
+    }
+  }, [props.spotify.player]);
+
   useEffect(() => {
     if (window.location.href.includes('#') && !props.user.user) {
       const removeHostFromUrl = window.location.href.split('#');
@@ -74,7 +86,12 @@ const Home = (props) => {
           <span style={{ fontWeight: '700' }}> Now Playing: { !currPlaying || currPlaying === '' ? 'none' : `${currPlaying.name} by ${currPlaying.artists.map(artist => ` ${artist.name}`)}`}</span>
         </div>
         <div>
-          <img src={albumArt} style={{ height: 150 }} alt="album cover" />
+
+          { !currPlaying || currPlaying === '' ? null : (
+            <a href={currPlaying.external_urls.spotify} target="_blank" rel="noreferrer">
+              <img src={albumArt} style={{ height: 150 }} alt="album cover" />
+            </a>
+          )}
         </div>
         <br />
         <br />
@@ -170,6 +187,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     getTopTracks: () => {
       dispatch(getTopTracks());
+    },
+    getPlayer: () => {
+      dispatch(getPlayer());
     },
   };
 };

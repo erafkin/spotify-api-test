@@ -64,10 +64,12 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin(),
     new HtmlWebpackPlugin({
+      inject: false,
       template: './public/index.html',
       filename: './index.html',
     }),
     new HtmlWebpackPlugin({
+      inject: false,
       template: './public/index.html',
       filename: './200.html',
     }),

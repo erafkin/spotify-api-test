@@ -19,4 +19,19 @@ router.route('/top/:type/:accessToken')
       });
   });
 
+router.route('/player/:token')
+  .get((req, res) => {
+    axios.get('https://api.spotify.com/v1/me/player', { headers: { Authorization: `Bearer ${req.params.token}` } })
+      .then((response) => {
+        res.send({ status: 200, error: null, response: response.data });
+      })
+      .catch((error) => {
+        res.send({
+          status: error.response.status,
+          error: 'error getting player ',
+          response: error.message,
+        });
+      });
+  });
+
 export default router;

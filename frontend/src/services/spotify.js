@@ -26,3 +26,15 @@ export const getTopArtists = (accessToken) => {
       });
   });
 };
+
+export const getPlayer = (token) => {
+  return new Promise((resolve, reject) => {
+    axios.get(`${URL}/player/${token}`)
+      .then((response) => {
+        resolve(response.data.response);
+      })
+      .catch((error) => {
+        reject(error.response);
+      });
+  });
+};

@@ -56,7 +56,7 @@ passport.use(
 );
 
 router.get('/failure', (req, res) => { return res.send('failure:('); });
-router.get('/login', passport.authenticate('spotify', { scope: ['user-read-private', 'user-read-email', 'user-read-playback-state', 'user-top-read'] }));
+router.get('/login', passport.authenticate('spotify', { scope: ['streaming', 'user-read-private', 'user-read-email', 'user-read-playback-state', 'user-top-read'] }));
 router.get(
   '/spotify/callback',
   passport.authenticate('spotify', { failureRedirect: '/auth/login' }),

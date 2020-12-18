@@ -10,6 +10,7 @@ const ActionTypes = {
 
   SET_TOP_TRACKS: 'SET_TOP_TRACKS',
   SET_TOP_ARTISTS: 'SET_TOP_ARTISTS',
+  SET_PLAYER: 'SET_PLAYER',
   // flag to handle any errors that arise
   API_ERROR: 'API_ERROR',
 };
@@ -70,6 +71,17 @@ const getTopArtists = () => {
       });
   };
 };
+const getPlayer = () => {
+  return (dispatch, getState) => {
+    spotifyRequests.getPlayer(getState().user.accessToken)
+      .then((response) => {
+        dispatch({ type: ActionTypes.SET_PLAYER, payload: response });
+      })
+      .catch((error) => {
+        dispatch({ type: ActionTypes.API_ERROR });
+      });
+  };
+};
 export {
   ActionTypes,
   login,
@@ -77,4 +89,5 @@ export {
   getUser,
   getTopTracks,
   getTopArtists,
+  getPlayer,
 };

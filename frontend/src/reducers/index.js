@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
 import UserReducer from './user';
+import SpotifyReducer from './spotify';
 
 const rootReducer = combineReducers({
-    user: UserReducer
+  user: UserReducer,
+  spotify: SpotifyReducer,
 });
 
 export default rootReducer;

@@ -1,14 +1,13 @@
 import axios from 'axios';
 import { DEV_URL } from '../constants';
 
-const LOGIN_URL = `${DEV_URL}/auth/login`;
-const USER_URL = `${DEV_URL}/user`;
+const URL = `${DEV_URL}/spotify`;
 
-export const isLoggedIn = () => {
+export const getTopTracks = (accessToken) => {
   return new Promise((resolve, reject) => {
-    axios.get(LOGIN_URL)
+    axios.get(`${URL}/top/tracks/${accessToken}`)
       .then((response) => {
-        resolve(response);
+        resolve(response.data);
       })
       .catch((error) => {
         reject(error.response);
@@ -16,9 +15,9 @@ export const isLoggedIn = () => {
   });
 };
 
-export const getUser = (username) => {
+export const getTopArtists = (accessToken) => {
   return new Promise((resolve, reject) => {
-    axios.get(`${USER_URL}/${username}`)
+    axios.get(`${URL}/top/artists/${accessToken}`)
       .then((response) => {
         resolve(response.data);
       })

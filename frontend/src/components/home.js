@@ -71,7 +71,7 @@ const Home = (props) => {
       <div style={{ margin: '2vw' }}>
         <h1> Welcome, {props.user.user.username} </h1>
         <div>
-          Now Playing: { !currPlaying || currPlaying === '' ? 'none' : `${currPlaying.name} by ${currPlaying.artists.map(artist => ` ${artist.name}`)}`}
+          <span style={{ fontWeight: '700' }}> Now Playing: { !currPlaying || currPlaying === '' ? 'none' : `${currPlaying.name} by ${currPlaying.artists.map(artist => ` ${artist.name}`)}`}</span>
         </div>
         <div>
           <img src={albumArt} style={{ height: 150 }} alt="album cover" />
@@ -115,7 +115,7 @@ const Home = (props) => {
                 return (
                   <div key={artist.name}>
                     <p>
-                      {artist.name}<br />
+                      <span style={{ fontWeight: '700' }}>{artist.name}</span><br />
                       genres: {artist.genres.map((genre) => { return (` ${genre}, `); })}
                     </p>
                   </div>

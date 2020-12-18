@@ -1,6 +1,7 @@
 # a web app playing around with the spotify api
 
-this is a full stack web app built with react and node/express that accesses the [spotify api](https://developer.spotify.com/documentation/). You have to sign in through spotify and autho
+this is a full stack web app built with react and node/express that accesses the [spotify api](https://developer.spotify.com/documentation/). 
+uses [passport-spotify](http://www.passportjs.org/packages/passport-spotify/) to expedite the auth process.
 
 ## run
 to use clone this repo, cd into both the front and back ends and run `yarn install`

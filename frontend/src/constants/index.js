@@ -1,2 +1,2 @@
 export const DEV_URL = 'http://localhost:9090';
-export const HOME_URL = 'http://localhost:8080';
+export const PROD_URL = 'https://spotify-genre-playlists.herokuapp.com';

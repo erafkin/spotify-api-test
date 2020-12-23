@@ -2203,7 +2203,7 @@ debug@^3.2.6:
   dependencies:
     ms "^2.1.1"
 
-debug@^4.0.1, debug@^4.1.0, debug@^4.1.1:
+debug@^4.0.1, debug@^4.1.0, debug@^4.1.1, debug@^4.3.0:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.1.tgz#f0d229c505e0c6d8c49ac553d1b13dc183f6b2ee"
   integrity sha512-doEwdvm4PCeK4K3RQN2ZC2BYUBaxwLARCqZmMjtF8a51J2Rb0xpVloFRnCODwqjpwnAoao4pelN8l3RJdv3gRQ==
@@ -3747,6 +3747,14 @@ lowercase-keys@^2.0.0:
   resolved "https://registry.yarnpkg.com/lowercase-keys/-/lowercase-keys-2.0.0.tgz#2603e78b7b4b0006cbca2fbcc8a3202558ac9479"
   integrity sha512-tqNXrS78oMOE73NMxK4EMLQsQowWf8jKooH9g7xPavRT706R6bkQJ6DY2Te7QukaZsulxa30wQ7bk0pm4XiHmA==
 
+lru-cache@^4.0.3:
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-4.1.5.tgz#8bbe50ea85bed59bc9e33dcab8235ee9bcf443cd"
+  integrity sha512-sWZlbEP2OsHNkXrMl5GYk/jKk70MBng6UU4YI/qGDYbgf6YbP4EvmqISbXCoJiRKs+1bSpFHVgQxvJ17F2li5g==
+  dependencies:
+    pseudomap "^1.0.2"
+    yallist "^2.1.2"
+
 lru-cache@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-6.0.0.tgz#6d6fe6570ebd96aaf90fcad1dafa3b2566db3a94"
@@ -3787,6 +3795,14 @@ memory-pager@^1.0.2:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/memory-pager/-/memory-pager-1.5.0.tgz#d8751655d22d384682741c972f2c3d6dfa3e66b5"
   integrity sha512-ZS4Bp4r/Zoeq6+NLJpP+0Zzm0pR8whtGPf1XExKLJBAczGMnSi3It14OiNCStjQjM6NU1okjQGSxgEZN8eBYKg==
+
+memorystore@^1.6.4:
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/memorystore/-/memorystore-1.6.4.tgz#6484175e58b854bcc04adffeed5e06e3af15f7ac"
+  integrity sha512-51j4kUedbqkWGby44hAhf5f/hj8GOvHoLX00/YHURBNxOMf5k8JbPuGfmeNpZEXhc3vrmfnFben4+rOOx3HjEQ==
+  dependencies:
+    debug "^4.3.0"
+    lru-cache "^4.0.3"
 
 merge-descriptors@1.0.1:
   version "1.0.1"
@@ -4450,6 +4466,11 @@ proxy-addr@~2.0.5:
   dependencies:
     forwarded "~0.1.2"
     ipaddr.js "1.9.1"
+
+pseudomap@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/pseudomap/-/pseudomap-1.0.2.tgz#f052a28da70e618917ef0a8ac34c1ae5a68286b3"
+  integrity sha1-8FKijacOYYkX7wqKw0wa5aaChrM=
 
 pstree.remy@^1.1.7:
   version "1.1.8"
@@ -5494,6 +5515,11 @@ xdg-basedir@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/xdg-basedir/-/xdg-basedir-4.0.0.tgz#4bc8d9984403696225ef83a1573cbbcb4e79db13"
   integrity sha512-PSNhEJDejZYV7h50BohL09Er9VaIefr2LMAf3OEmpCkjOi34eYyQYAXUTjEQtZJTKcF0E2UKTh+osDLsgNim9Q==
+
+yallist@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/yallist/-/yallist-2.1.2.tgz#1c11f9218f076089a47dd512f93c6699a6a81d52"
+  integrity sha1-HBH5IY8HYImkfdUS+TxmmaaoHVI=
 
 yallist@^4.0.0:
   version "4.0.0"

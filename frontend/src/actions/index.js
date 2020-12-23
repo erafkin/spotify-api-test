@@ -1,6 +1,6 @@
 import * as spotifyRequests from '../services/spotify';
 
-import { DEV_URL } from '../constants';
+import { PROD_URL } from '../constants';
 
 const ActionTypes = {
   SET_USER: 'SET_USER',
@@ -17,7 +17,7 @@ const ActionTypes = {
 const login = () => {
   return (dispatch, getState) => {
     if (!getState().user.user) {
-      window.location = `${DEV_URL}/auth/login`;
+      window.location = `${PROD_URL}/auth/login`;
       dispatch({ type: ActionTypes.SETTING_USER, payload: true });
     }
   };

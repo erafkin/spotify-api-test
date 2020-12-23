@@ -64,11 +64,6 @@ export const searchGenre = (token, genre) => {
 
 export const createPlaylist = (title, privatePlaylist, token, userId) => {
   return new Promise((resolve, reject) => {
-    console.log(title);
-    console.log(privatePlaylist);
-    console.log(token);
-    console.log(userId);
-
     axios.post(`https://api.spotify.com/v1/users/${userId}/playlists`, {
       name: title,
       public: !privatePlaylist,

@@ -4,12 +4,19 @@ import session from 'express-session';
 
 require('dotenv').config();
 
+const MemoryStore = require('memorystore')(session);
+
+const PROD_BE_URL = 'http://spotify-genre-playlists.herokuapp.com';
+// const DEV_BE_URL = 'http://localhost:9090';
+const PROD_FE_URL = 'http://spotify-genre-playlists.surge.sh/';
+// const DEV_FE_URL = 'http://localhost:8080/';
+
 const SpotifyStrategy = require('passport-spotify').Strategy;
 
 const router = express();
 
 router.use(passport.initialize());
-router.use(passport.session());
+
 passport.serializeUser((user, done) => {
   done(null, user);
 });
@@ -18,16 +25,22 @@ passport.deserializeUser((user, done) => {
   done(null, user);
 });
 
-router.use(
-  session({ secret: process.env.SECRET, resave: true, saveUninitialized: true }),
-);
+router.use(session({
+  cookie: { maxAge: 86400000 },
+  store: new MemoryStore({
+    checkPeriod: 86400000, // prune expired entries every 24h
+  }),
+  resave: false,
+  secret: process.env.SECRET,
+  saveUninitialized: true,
+}));
 
 passport.use(
   new SpotifyStrategy(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: 'http://localhost:9090/auth/spotify/callback', // REMEMBER TO CHANGE THIS OUT
+      callbackURL: `${PROD_BE_URL}/auth/spotify/callback`, // REMEMBER TO CHANGE THIS OUT
     },
     // eslint-disable-next-line camelcase
     ((accessToken, refreshToken, expires_in, profile, done) => {
@@ -55,7 +68,7 @@ router.get(
   passport.authenticate('spotify', { failureRedirect: '/auth/login' }),
   (req, res) => {
     // Successful authentication, redirect home.
-    res.redirect(`http://localhost:8080/#${req.user.profile.username}&${req.user.accessToken}&${req.user.refreshToken}&${req.user.userId}`);
+    res.redirect(`${PROD_FE_URL}#${req.user.profile.username}&${req.user.accessToken}&${req.user.refreshToken}&${req.user.userId}`);
   },
 );
 

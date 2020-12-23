@@ -31,7 +31,9 @@ passport.use(
     },
     // eslint-disable-next-line camelcase
     ((accessToken, refreshToken, expires_in, profile, done) => {
-      done(null, { profile, accessToken, refreshToken });
+      done(null, {
+        profile, accessToken, refreshToken, userId: profile.id,
+      });
     }),
   ),
 );
@@ -53,7 +55,7 @@ router.get(
   passport.authenticate('spotify', { failureRedirect: '/auth/login' }),
   (req, res) => {
     // Successful authentication, redirect home.
-    res.redirect(`http://localhost:8080/#${req.user.profile.username}&${req.user.accessToken}&${req.user.refreshToken}`);
+    res.redirect(`http://localhost:8080/#${req.user.profile.username}&${req.user.accessToken}&${req.user.refreshToken}&${req.user.userId}`);
   },
 );
 

@@ -22,7 +22,10 @@ MONGO_URI={your_mongo_uri}
 - allows you to create playlists from your top genres
 
 am i embarrassed that glee cast is my current number 2 artist? no.
-![screenshot of the web interface](readme.png)
+![screenshot of the home page](home.png)
+
+![screenshot of the playlists](playlists.png)
+
 
 ## Live
 live here [http://spotify-genre-playlists.surge.sh/](http://spotify-genre-playlists.surge.sh/)

@@ -19,6 +19,10 @@ MONGO_URI={your_mongo_uri}
 - current top artists (medium term)
 - current top tracks (medium term)
 - current top genres (pulled from medium term top artists)
+- allows you to create playlists from your top genres
 
 am i embarrassed that glee cast is my current number 2 artist? no.
 ![screenshot of the web interface](readme.png)
+
+## Live
+live here [http://spotify-genre-playlists.surge.sh/](http://spotify-genre-playlists.surge.sh/)

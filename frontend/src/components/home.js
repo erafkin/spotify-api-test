@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, NavLink } from 'react-router-dom';
 
 import {
   login, setUserFromLogin, getTopTracks, getTopArtists, getPlayer,
 } from '../actions';
-import { getUser } from '../services/user';
 
 
 const Home = (props) => {
@@ -27,12 +26,19 @@ const Home = (props) => {
       clearInterval(interval);
     }
   }, [props.spotify.player]);
+  useEffect(() => {
+    if (props.user.user) {
+      props.getTopArtists();
+      props.getTopTracks();
+      props.getPlayer();
+    }
+  }, [props.user]);
 
   useEffect(() => {
     if (window.location.href.includes('#') && !props.user.user) {
       const removeHostFromUrl = window.location.href.split('#');
       const vars = removeHostFromUrl[1].split('&');
-      props.setUserFromLogin(vars[0], vars[1], vars[2]);
+      props.setUserFromLogin(vars[0], vars[1], vars[2], vars[3]);
     } else if (!props.user.user && !props.user.setting_user) {
       props.login();
     } else if (window.location.href.includes('#')) {
@@ -43,31 +49,19 @@ const Home = (props) => {
   if (!props.user.user && !props.user.setting_user) {
     return (<div>please login</div>);
   } else if (!props.spotify.top_artists) {
-    props.getTopArtists(); props.getTopTracks(); props.getPlayer();
     return (<div>loading...</div>);
   } else if (!window.location.href.includes('#')) {
-    const tempGenres = {};
-    let genres = [];
-    if (props.spotify.top_artists) {
-      props.spotify.top_artists.items.forEach((artist) => {
-        artist.genres.forEach((genre) => {
-          if (Object.keys(tempGenres).includes(genre)) {
-            tempGenres[genre] += 1;
-          } else {
-            tempGenres[genre] = 1;
-          }
-        });
-      });
-      genres = [...Object.keys(tempGenres)].sort((a, b) => {
-        if (tempGenres[a] < tempGenres[b]) return 1;
-        if (tempGenres[a] > tempGenres[b]) return -1;
-        return 0;
-      });
-    }
-
     return (
       <div style={{ margin: '2vw' }}>
-        <h1> Welcome, {props.user.user.username} </h1>
+        <h1> Welcome, {props.user.user} </h1>
+        <NavLink to="/playlist" style={{ textDecoration: 'none' }}>
+          <div style={{
+            width: '10vw', textAlign: 'center', backgroundColor: '#1DB954', color: 'white', padding: '10px', margin: '10px',
+          }}
+          >
+            Make a playlist based off of your top genres
+          </div>
+        </NavLink>
         <div>
           <span style={{ fontWeight: '700' }}> Now Playing: { !currPlaying || currPlaying === '' ? 'none' : `${currPlaying.name} by ${currPlaying.artists.map(artist => ` ${artist.name}`)}`}</span>
         </div>
@@ -120,7 +114,7 @@ const Home = (props) => {
           <div style={{ display: 'inline-block' }}>
             <h2>top genres</h2>
             <div>
-              {props.spotify.top_artists ? genres.map((genre) => {
+              {props.spotify.genres ? props.spotify.genres.map((genre) => {
                 return (
                   <div key={genre}>
                     <p>
@@ -153,11 +147,8 @@ const mapDispatchToProps = (dispatch) => {
     login: () => {
       dispatch(login());
     },
-    setUserFromLogin: (username, accessToken, refreshToken) => {
-      dispatch(setUserFromLogin(username, accessToken, refreshToken));
-    },
-    getUser: (username) => {
-      dispatch(getUser(username));
+    setUserFromLogin: (username, accessToken, refreshToken, userId) => {
+      dispatch(setUserFromLogin(username, accessToken, refreshToken, userId));
     },
     getTopArtists: () => {
       dispatch(getTopArtists());
@@ -168,6 +159,7 @@ const mapDispatchToProps = (dispatch) => {
     getPlayer: () => {
       dispatch(getPlayer());
     },
+
   };
 };
 

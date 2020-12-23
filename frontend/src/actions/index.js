@@ -1,4 +1,3 @@
-import * as userRequests from '../services/user';
 import * as spotifyRequests from '../services/spotify';
 
 import { DEV_URL } from '../constants';
@@ -7,7 +6,7 @@ const ActionTypes = {
   SET_USER: 'SET_USER',
   SETTING_USER: 'SETTING_USER',
   SET_USER_AND_TOKENS: 'SET_USER_AND_TOKENS',
-
+  SET_PLAYLIST: 'SET_PLAYLIST',
   SET_TOP_TRACKS: 'SET_TOP_TRACKS',
   SET_TOP_ARTISTS: 'SET_TOP_ARTISTS',
   SET_PLAYER: 'SET_PLAYER',
@@ -23,28 +22,16 @@ const login = () => {
     }
   };
 };
-const getUser = (username) => {
+
+const setUserFromLogin = (username, accessToken, refreshToken, userId) => {
   return (dispatch) => {
-    userRequests.getUser(username)
-      .then((response) => {
-        dispatch({ type: ActionTypes.SET_USER, payload: response.response });
-      })
-      .catch((error) => {
-        dispatch({ type: ActionTypes.API_ERROR });
-      });
-  };
-};
-const setUserFromLogin = (username, accessToken, refreshToken) => {
-  return (dispatch) => {
-    userRequests
-      .getUser(username)
-      .then((response) => {
-        dispatch({ type: ActionTypes.SET_USER_AND_TOKENS, payload: { user: response.response, accessToken, refreshToken } });
-        dispatch({ type: ActionTypes.SETTING_USER, payload: false });
-      })
-      .catch((error) => {
-        dispatch({ type: ActionTypes.API_ERROR });
-      });
+    dispatch({
+      type: ActionTypes.SET_USER_AND_TOKENS,
+      payload: {
+        user: username, accessToken, refreshToken, userId,
+      },
+    });
+    dispatch({ type: ActionTypes.SETTING_USER, payload: false });
   };
 };
 
@@ -52,7 +39,7 @@ const getTopTracks = () => {
   return (dispatch, getState) => {
     spotifyRequests.getTopTracks(getState().user.accessToken)
       .then((response) => {
-        dispatch({ type: ActionTypes.SET_TOP_TRACKS, payload: response.response });
+        dispatch({ type: ActionTypes.SET_TOP_TRACKS, payload: response });
       })
       .catch((error) => {
         dispatch({ type: ActionTypes.API_ERROR });
@@ -63,7 +50,26 @@ const getTopArtists = () => {
   return (dispatch, getState) => {
     spotifyRequests.getTopArtists(getState().user.accessToken)
       .then((response) => {
-        dispatch({ type: ActionTypes.SET_TOP_ARTISTS, payload: response.response });
+        const tempGenres = {};
+        let genres = [];
+        const topArtists = response;
+        if (topArtists && topArtists.items) {
+          topArtists.items.forEach((artist) => {
+            artist.genres.forEach((genre) => {
+              if (Object.keys(tempGenres).includes(genre)) {
+                tempGenres[genre] += 1;
+              } else {
+                tempGenres[genre] = 1;
+              }
+            });
+          });
+          genres = [...Object.keys(tempGenres)].sort((a, b) => {
+            if (tempGenres[a] < tempGenres[b]) return 1;
+            if (tempGenres[a] > tempGenres[b]) return -1;
+            return 0;
+          });
+        }
+        dispatch({ type: ActionTypes.SET_TOP_ARTISTS, payload: { artists: response, genres } });
       })
       .catch((error) => {
         dispatch({ type: ActionTypes.API_ERROR });
@@ -87,13 +93,71 @@ const getPlayer = () => {
       });
   };
 };
+const getPlaylistOfGenres = (genres) => {
+  return (dispatch, getState) => {
+    const token = getState().user.accessToken;
+    const newGenres = genres.map((genre) => {
+      return `%22${genre.split(' ').join('%20')}%22`;
+    });
+
+    const promises = [];
+    const playlist = [];
+    newGenres.forEach((genre) => {
+      promises.push(
+        new Promise((resolve, reject) => {
+          spotifyRequests.searchGenre(token, genre)
+            .then((response) => {
+              playlist.push(response.data);
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        }),
+      );
+    });
+    Promise.all(promises)
+      .then((response) => {
+        dispatch({ type: ActionTypes.SET_PLAYLIST, payload: playlist });
+      }).catch((error) => {
+        dispatch({ type: ActionTypes.API_ERROR });
+      });
+  };
+};
+
+const savePlaylist = (title, privatePlaylist) => {
+  return (dispatch, getState) => {
+    const token = getState().user.accessToken;
+    const { userId } = getState().user;
+    spotifyRequests.createPlaylist(title, privatePlaylist, token, userId)
+      .then((createdPlaylist) => {
+        const { playlist } = getState().spotify;
+        const uris = [];
+        playlist.forEach((genre) => {
+          genre.tracks.items.forEach((track) => {
+            uris.push(track.uri);
+          });
+        });
+        spotifyRequests.addToPlaylist(uris, createdPlaylist.data.id, token)
+          .then((response) => {
+            dispatch({ type: ActionTypes.SET_PLAYLIST, payload: null });
+          }).catch((error) => {
+            dispatch({ type: ActionTypes.API_ERROR });
+          });
+      })
+      .catch((error) => {
+        dispatch({ type: ActionTypes.API_ERROR });
+      });
+  };
+};
 
 export {
   ActionTypes,
   login,
   setUserFromLogin,
-  getUser,
   getTopTracks,
   getTopArtists,
   getPlayer,
+  getPlaylistOfGenres,
+  savePlaylist,
 };

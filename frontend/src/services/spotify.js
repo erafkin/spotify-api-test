@@ -38,3 +38,15 @@ export const getPlayer = (token) => {
       });
   });
 };
+
+export const getCurrTrack = (token, url) => {
+  return new Promise((resolve, reject) => {
+    axios.get(url, { headers: { Authorization: `Bearer ${token}` } })
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((error) => {
+        reject(error.response);
+      });
+  });
+};

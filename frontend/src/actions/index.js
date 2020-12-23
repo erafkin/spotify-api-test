@@ -72,15 +72,22 @@ const getTopArtists = () => {
 };
 const getPlayer = () => {
   return (dispatch, getState) => {
-    spotifyRequests.getPlayer(getState().user.accessToken)
+    const token = getState().user.accessToken;
+    spotifyRequests.getPlayer(token)
       .then((response) => {
-        dispatch({ type: ActionTypes.SET_PLAYER, payload: response });
+        spotifyRequests.getCurrTrack(token, response.item.href)
+          .then((resp) => {
+            dispatch({ type: ActionTypes.SET_PLAYER, payload: { player: response, curr_track: resp } });
+          }).catch((error) => {
+            dispatch({ type: ActionTypes.API_ERROR });
+          });
       })
       .catch((error) => {
         dispatch({ type: ActionTypes.API_ERROR });
       });
   };
 };
+
 export {
   ActionTypes,
   login,

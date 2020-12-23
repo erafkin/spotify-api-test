@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import SpotifyWebApi from 'spotify-web-api-js';
 
 import {
   login, setUserFromLogin, getTopTracks, getTopArtists, getPlayer,
@@ -13,26 +12,17 @@ const Home = (props) => {
   const [albumArt, setAlbumArt] = useState('');
   const [currPlaying, setCurrPlaying] = useState();
   const [interval, setMyInterval] = useState();
-
-  const spotifyApi = new SpotifyWebApi();
-
-
-  const getNowPlaying = () => {
-    spotifyApi.getMyCurrentPlaybackState()
-      .then((response) => {
-        setCurrPlaying(response.item);
-        setAlbumArt(response.item.album.images[0].url);
-        props.getPlayer();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  useEffect(() => {
+    if (props.spotify.player && props.spotify.curr_track) {
+      setAlbumArt(props.spotify.curr_track.data.album.images[0].url);
+      setCurrPlaying(props.spotify.curr_track.data);
+    }
+  }, [props.spotify.player]);
 
   useEffect(() => {
     if (currPlaying && props.spotify.player) {
       clearInterval(interval);
-      setMyInterval(setInterval(() => { props.getPlayer(); getNowPlaying(); }, currPlaying.duration_ms - props.spotify.player.progress_ms + 2000));
+      setMyInterval(setInterval(() => { props.getPlayer(); }, currPlaying.duration_ms - props.spotify.player.progress_ms + 2000));
     } else {
       clearInterval(interval);
     }
@@ -53,16 +43,9 @@ const Home = (props) => {
   if (!props.user.user && !props.user.setting_user) {
     return (<div>please login</div>);
   } else if (!props.spotify.top_artists) {
-    props.getTopArtists(); props.getTopTracks();
+    props.getTopArtists(); props.getTopTracks(); props.getPlayer();
     return (<div>loading...</div>);
   } else if (!window.location.href.includes('#')) {
-    if (props.user.accessToken) {
-      spotifyApi.setAccessToken(props.user.accessToken);
-      if (!currPlaying) {
-        getNowPlaying();
-      }
-    }
-
     const tempGenres = {};
     let genres = [];
     if (props.spotify.top_artists) {

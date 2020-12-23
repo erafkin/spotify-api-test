@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
-
 import { getPlaylistOfGenres, savePlaylist } from '../actions';
 
 const Playlist = (props) => {
@@ -24,8 +20,6 @@ const Playlist = (props) => {
   }, [props.playlist]);
   return (
     <div>
-      <ToastContainer />
-
       <h1>playlist page</h1>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
 
@@ -104,6 +98,7 @@ const Playlist = (props) => {
                 onClick={(event) => { changePrivate(event.target.checked); }}
                 defaultChecked={privatePlaylist}
               />
+
               <div
                 tabIndex={0}
                 role="button"
@@ -116,9 +111,8 @@ const Playlist = (props) => {
                     alert('you must have a playlist title');
                   } else {
                     props.savePlaylist(playlistTitle, privatePlaylist);
-                    toast('playlist created! go check it out on spotify!', {
-                      position: toast.POSITION.TOP_CENTER,
-                    });
+                    // eslint-disable-next-line no-alert
+                    alert('playlist created! go check it out on spotify!');
                   }
                 }}
               >

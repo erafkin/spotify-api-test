@@ -1,7 +1,6 @@
 import express from 'express';
 import passport from 'passport';
 import session from 'express-session';
-import User from '../models/user';
 
 require('dotenv').config();
 
@@ -32,31 +31,23 @@ passport.use(
     },
     // eslint-disable-next-line camelcase
     ((accessToken, refreshToken, expires_in, profile, done) => {
-      const {
-        provider, id, username, displayName, profileUrl, photos, country, followers,
-      } = profile;
-      User.find({ spotifyId: id })
-        .then((users) => {
-          if (users && users.length === 0) {
-            User.create({
-              provider, spotifyId: id, username, displayName, profileUrl, photos, country, followers,
-            }).then((user) => {
-              return done(null, { profile: user, accessToken, refreshToken });
-            }).catch((error) => {
-              return done(error, null);
-            });
-          } else {
-            done(null, { profile, accessToken, refreshToken });
-          }
-        }).catch((error) => {
-          return done(error, null);
-        });
+      done(null, { profile, accessToken, refreshToken });
     }),
   ),
 );
 
 router.get('/failure', (req, res) => { return res.send('failure:('); });
-router.get('/login', passport.authenticate('spotify', { scope: ['streaming', 'user-read-private', 'user-read-email', 'user-read-playback-state', 'user-top-read'] }));
+router.get('/login', passport.authenticate('spotify', {
+  scope: ['streaming',
+    'user-read-private',
+    'user-read-email',
+    'user-read-playback-state',
+    'user-top-read',
+    'playlist-modify-public',
+    'playlist-modify-private',
+    'playlist-read-private',
+    'playlist-read-collaborative'],
+}));
 router.get(
   '/spotify/callback',
   passport.authenticate('spotify', { failureRedirect: '/auth/login' }),

@@ -25,7 +25,7 @@ const Home = (props) => {
     } else {
       clearInterval(interval);
     }
-  }, [props.spotify.player]);
+  }, [currPlaying]);
   useEffect(() => {
     if (props.user.user) {
       props.getTopArtists();
